@@ -28,3 +28,79 @@ plot(pressure)
 ```
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+```{r 1 code}
+library(boot)
+library(lpSolve)
+library(rootSolve)
+library(Matrix)
+library(calculus)
+library(magrittr)
+
+pokemon=read.csv("Documents/3r/AE/practica/pokemon_alopez247.csv",header=TRUE)
+print("filtrat pokemon primera generació")
+pokemon2 = pokemon[0:151,0:23]
+pokemon2
+print("Primer objectiu (Relació pes i altura amb el catch_rate)")
+print("Anova")
+anova=aov(Catch_Rate~Height_m+Weight_kg,data=pokemon2)
+summary(anova)
+print("Model Lineal Generalitzat")
+modg=glm(Catch_Rate~Height_m+Weight_kg,family = poisson, data=pokemon2)
+summary(modg)
+print("acdvdvdv")
+aov(modg)
+print("-----")
+confint(modg)
+print("-----")
+exp(coef(modg))
+print("-----")
+#Matriz de varianzas y covarianzas
+cov(pokemon2)
+print("-----")
+#Matriz 
+#cov(modg)
+print("-----")
+#Matriz que muestra correlación entre x e y
+cor(pokemon2)
+print("-----")
+```
+
+
+
+```{r 2 code}
+library(boot)
+library(lpSolve)
+library(rootSolve)
+library(Matrix)
+library(calculus)
+library(magrittr)
+
+pokemon=read.csv("Documents/3r/AE/practica/pokemon_alopez247.csv",header=TRUE)
+print("filtrat pokemon primera generació")
+pokemon2 = pokemon[0:151,0:23]
+pokemon2
+print("Primer objectiu (Relació Defensa i Defensa especial amb l'HP)")
+print("Anova")
+anova=aov(HP~Defense+Sp_Def,data=pokemon2)
+summary(anova)
+print("Model Lineal Generalitzat")
+modg=glm(HP~Defense+Sp_Def,family = poisson, data=pokemon2)
+summary(modg)
+print("acdvdvdv")
+aov(modg)
+print("-----")
+confint(modg)
+print("-----")
+exp(coef(modg))
+print("-----")
+#Matriz de varianzas y covarianzas
+cov(pokemon2)
+print("-----")
+#Matriz 
+#cov(modg)
+print("-----")
+#Matriz que muestra correlación entre x e y
+cor(pokemon2)
+print("-----")
+```
