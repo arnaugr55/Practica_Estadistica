@@ -104,3 +104,31 @@ print("-----")
 cor(pokemon2)
 print("-----")
 ```
+
+```{r 3 code}
+library(boot)
+library(lpSolve)
+library(rootSolve)
+library(Matrix)
+library(calculus)
+library(magrittr)
+
+pokemon=read.csv("Documents/3r/AE/practica/pokemon_alopez247.csv",header=TRUE)
+print("filtrat pokemon primera generació")
+pokemon2 = pokemon[0:151,0:23]
+pokemon2
+print("Primer objectiu (Relació Pr_Male amb l'HP)")
+print("Anova")
+anova=aov(HP~Pr_Male,data=pokemon2)
+summary(anova)
+print("Model lineal simple")
+model=lm(HP~Pr_Male,data=pokemon2)
+model
+summary(model)
+print("acdvdvdv")
+aov(model)
+print("-----")
+confint(model)
+print("-----")
+exp(coef(model))
+```
