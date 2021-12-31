@@ -24,12 +24,12 @@ pokemon2 <- pokemon[0:151,0:23]
 
 print("Afegides columnes amb la importància de cada stat en el pokémon")
 total = pokemon2$Total
-pokemon2["%_HP"] <- pokemon2$HP / total
-pokemon2["%_Attack"] <- pokemon2$Attack / total
-pokemon2["%_Defense"] <- pokemon2$Defense / total
-pokemon2["%_Sp_Atk"] <- pokemon2$Sp_Atk / total
-pokemon2["%_Sp_Def"] <- pokemon2$Sp_Def / total
-pokemon2["%_Speed"] <- pokemon2$Speed / total
+pokemon2["perc_HP"] <- round((pokemon2$HP / total)*100)
+pokemon2["perc_Attack"] <- round((pokemon2$Attack / total)*100)
+pokemon2["perc_Defense"] <- round((pokemon2$Defense / total)*100)
+pokemon2["perc_Sp_Atk"] <- round((pokemon2$Sp_Atk / total)*100)
+pokemon2["perc_Sp_Def"] <- round((pokemon2$Sp_Def / total)*100)
+pokemon2["perc_Speed"] <- round((pokemon2$Speed / total)*100)
 pokemon2
 
 print("Primer objectiu (Relació pes i altura amb el catch_rate)")
@@ -73,20 +73,20 @@ pokemon2 <- pokemon[0:151,0:23]
 
 print("Afegides columnes amb la importància de cada stat en el pokémon")
 total = pokemon2$Total
-pokemon2["%_HP"] <- pokemon2$HP / total
-pokemon2["%_Attack"] <- pokemon2$Attack / total
-pokemon2["%_Defense"] <- pokemon2$Defense / total
-pokemon2["%_Sp_Atk"] <- pokemon2$Sp_Atk / total
-pokemon2["%_Sp_Def"] <- pokemon2$Sp_Def / total
-pokemon2["%_Speed"] <- pokemon2$Speed / total
+pokemon2["perc_HP"] <- round((pokemon2$HP / total)*100)
+pokemon2["perc_Attack"] <- round((pokemon2$Attack / total)*100)
+pokemon2["perc_Defense"] <- round((pokemon2$Defense / total)*100)
+pokemon2["perc_Sp_Atk"] <- round((pokemon2$Sp_Atk / total)*100)
+pokemon2["perc_Sp_Def"] <- round((pokemon2$Sp_Def / total)*100)
+pokemon2["perc_Speed"] <- round((pokemon2$Speed / total)*100)
 pokemon2
 
 print("Primer objectiu (Relació Defensa i Defensa especial amb l'HP)")
 print("Anova")
-anova=aov(HP~Defense+Sp_Def,data=pokemon2)
+anova=aov(perc_HP~perc_Defense+perc_Sp_Def,data=pokemon2)
 summary(anova)
 print("Model Lineal Generalitzat")
-modg=glm(HP~Defense+Sp_Def,family = poisson, data=pokemon2)
+modg=glm(perc_HP~perc_Defense+perc_Sp_Def,family = poisson, data=pokemon2)
 summary(modg)
 print("acdvdvdv")
 aov(modg)
@@ -120,20 +120,20 @@ pokemon2 <- pokemon[0:151,0:23]
 
 print("Afegides columnes amb la importància de cada stat en el pokémon")
 total = pokemon2$Total
-pokemon2["%_HP"] <- pokemon2$HP / total
-pokemon2["%_Attack"] <- pokemon2$Attack / total
-pokemon2["%_Defense"] <- pokemon2$Defense / total
-pokemon2["%_Sp_Atk"] <- pokemon2$Sp_Atk / total
-pokemon2["%_Sp_Def"] <- pokemon2$Sp_Def / total
-pokemon2["%_Speed"] <- pokemon2$Speed / total
+pokemon2["perc_HP"] <- round((pokemon2$HP / total)*100)
+pokemon2["perc_Attack"] <- round((pokemon2$Attack / total)*100)
+pokemon2["perc_Defense"] <- round((pokemon2$Defense / total)*100)
+pokemon2["perc_Sp_Atk"] <- round((pokemon2$Sp_Atk / total)*100)
+pokemon2["perc_Sp_Def"] <- round((pokemon2$Sp_Def / total)*100)
+pokemon2["perc_Speed"] <- round((pokemon2$Speed / total)*100)
 pokemon2
 
 print("Primer objectiu (Relació Pr_Male amb l'HP)")
 print("Anova")
-anova=aov(HP~Pr_Male,data=pokemon2)
+anova=aov(perc_HP~Pr_Male,data=pokemon2)
 summary(anova)
 print("Model lineal simple")
-model=lm(HP~Pr_Male,data=pokemon2)
+model=lm(perc_HP~Pr_Male,data=pokemon2)
 model
 summary(model)
 print("acdvdvdv")
