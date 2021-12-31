@@ -116,8 +116,18 @@ library(magrittr)
 
 pokemon=read.csv("Documents/3r/AE/practica/pokemon_alopez247.csv",header=TRUE)
 print("filtrat pokemon primera generació")
-pokemon2 = pokemon[0:151,0:23]
+pokemon2 <- pokemon[0:151,0:23]
+
+print("Afegides columnes amb la importància de cada stat en el pokémon")
+total = pokemon2$Total
+pokemon2["%_HP"] <- pokemon2$HP / total
+pokemon2["%_Attack"] <- pokemon2$Attack / total
+pokemon2["%_Defense"] <- pokemon2$Defense / total
+pokemon2["%_Sp_Atk"] <- pokemon2$Sp_Atk / total
+pokemon2["%_Sp_Def"] <- pokemon2$Sp_Def / total
+pokemon2["%_Speed"] <- pokemon2$Speed / total
 pokemon2
+
 print("Primer objectiu (Relació Pr_Male amb l'HP)")
 print("Anova")
 anova=aov(HP~Pr_Male,data=pokemon2)
