@@ -9,26 +9,6 @@ output: word_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## R Markdown
-
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
-```
-
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
-
 ```{r 1 code}
 library(boot)
 library(lpSolve)
@@ -38,9 +18,20 @@ library(calculus)
 library(magrittr)
 
 pokemon=read.csv("Documents/3r/AE/practica/pokemon_alopez247.csv",header=TRUE)
+
 print("filtrat pokemon primera generació")
-pokemon2 = pokemon[0:151,0:23]
+pokemon2 <- pokemon[0:151,0:23]
+
+print("Afegides columnes amb la importància de cada stat en el pokémon")
+total = pokemon2$Total
+pokemon2["%_HP"] <- pokemon2$HP / total
+pokemon2["%_Attack"] <- pokemon2$Attack / total
+pokemon2["%_Defense"] <- pokemon2$Defense / total
+pokemon2["%_Sp_Atk"] <- pokemon2$Sp_Atk / total
+pokemon2["%_Sp_Def"] <- pokemon2$Sp_Def / total
+pokemon2["%_Speed"] <- pokemon2$Speed / total
 pokemon2
+
 print("Primer objectiu (Relació pes i altura amb el catch_rate)")
 print("Anova")
 anova=aov(Catch_Rate~Height_m+Weight_kg,data=pokemon2)
@@ -78,8 +69,18 @@ library(magrittr)
 
 pokemon=read.csv("Documents/3r/AE/practica/pokemon_alopez247.csv",header=TRUE)
 print("filtrat pokemon primera generació")
-pokemon2 = pokemon[0:151,0:23]
+pokemon2 <- pokemon[0:151,0:23]
+
+print("Afegides columnes amb la importància de cada stat en el pokémon")
+total = pokemon2$Total
+pokemon2["%_HP"] <- pokemon2$HP / total
+pokemon2["%_Attack"] <- pokemon2$Attack / total
+pokemon2["%_Defense"] <- pokemon2$Defense / total
+pokemon2["%_Sp_Atk"] <- pokemon2$Sp_Atk / total
+pokemon2["%_Sp_Def"] <- pokemon2$Sp_Def / total
+pokemon2["%_Speed"] <- pokemon2$Speed / total
 pokemon2
+
 print("Primer objectiu (Relació Defensa i Defensa especial amb l'HP)")
 print("Anova")
 anova=aov(HP~Defense+Sp_Def,data=pokemon2)
