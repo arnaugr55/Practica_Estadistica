@@ -33,6 +33,19 @@ pokemon2["perc_Speed"] <- round((pokemon2$Speed / total)*100)
 pokemon2
 
 print("Primer objectiu (Relació pes i altura amb el catch_rate)")
+
+#Gràfiques
+print("Histograma del pes")
+hist(pokemon2$Weight_kg)
+print("Histograma de l'altura")
+hist(pokemon2$Height_m)
+print("Histograma del catch_rate")
+hist(pokemon2$Catch_Rate)
+print("Gràfica relació pes amb catch_rate")
+plot(pokemon2$Weight_kg,pokemon2$Catch_Rate,type = "p", main = "Relació pes amb catch_rate", xlab = "Pes", ylab = "Catch_Rate")
+print("Gràfica relació altura amb catch_rate")
+plot(pokemon2$Height_m,pokemon2$Catch_Rate,type = "p", main = "Relació altura amb catch_rate", xlab = "Altura", ylab = "Catch Rate")
+
 print("Anova")
 anova=aov(Catch_Rate~Height_m+Weight_kg,data=pokemon2)
 summary(anova)
@@ -82,6 +95,20 @@ pokemon2["perc_Speed"] <- round((pokemon2$Speed / total)*100)
 pokemon2
 
 print("Primer objectiu (Relació Defensa i Defensa especial amb l'HP)")
+
+#Gràfiques
+print("Histograma de l'HP")
+hist(pokemon2$perc_HP)
+print("Histograma del perc_Defense")
+hist(pokemon2$perc_Defense)
+print("Histograma del perc_Sp_Def")
+hist(pokemon2$perc_Sp_Def)
+print("Gràfica relació percentatge HP amb Defense")
+plot(pokemon2$perc_Defense,pokemon2$perc_HP,type = "p", main = "Relació HP amb Defense", xlab = "Defense", ylab = "HP")
+print("Gràfica relació percentatge HP amb Sp_Def")
+plot(pokemon2$perc_Sp_Def,pokemon2$perc_HP,type = "p", main = "Relació HP amb Special Defense", xlab = "Special Defense", ylab = "HP")
+#Veient les grafiques es pot veure que no hi ha suficient relació per fer el model
+
 print("Anova")
 anova=aov(perc_HP~perc_Defense+perc_Sp_Def,data=pokemon2)
 summary(anova)
@@ -129,6 +156,15 @@ pokemon2["perc_Speed"] <- round((pokemon2$Speed / total)*100)
 pokemon2
 
 print("Primer objectiu (Relació Pr_Male amb l'HP)")
+
+#Gràfiques
+print("Histograma del percentatge de l'HP")
+hist(pokemon2$perc_HP)
+print("Histograma del percentatge del Pr_Male")
+hist(pokemon2$Pr_Male)
+print("Gràfica relació percentatge HP amb Pr_Male")
+plot(pokemon2$Pr_Male,pokemon2$perc_HP,type = "p", main = "Relació HP amb Pr_Male", xlab = "Pr_Male", ylab = "HP")
+
 print("Anova")
 anova=aov(perc_HP~Pr_Male,data=pokemon2)
 summary(anova)
