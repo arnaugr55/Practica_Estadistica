@@ -43,7 +43,13 @@ pokemon3["perc_Defense"] = pokemon2$perc_Defense
 pokemon3["perc_Sp_Atk"]  = pokemon2$perc_Sp_Atk
 pokemon3["perc_Sp_Def"]  = pokemon2$perc_Sp_Def
 pokemon3["perc_Speed"]   = pokemon2$perc_Speed
-pokemon3
+
+pokemon4=pokemon2[pokemon2$Type_1=="Water" | pokemon2$Type_1=="Grass" | pokemon2$Type_1=="Fire",]
+factors=factor(pokemon4$Type_1)
+tipus=as.numeric(factors)
+pokemon4["tipus"] = tipus
+pokemon4[is.na(pokemon4)]=0
+pokemon4
 
 ```
 
@@ -110,26 +116,50 @@ exp(coef(modg))
 ```
 
 ```{r 2 code}
-pokemon4=pokemon2[pokemon2$Type_1=="Normal" | pokemon2$Type_1=="Water",]
-a=pokemon2[pokemon2$Type_1=="Normal",]
-b=pokemon2[pokemon2$Type_1=="Water",]
-print("Grafica Atac Pokemons tipus normal")
-plot(a$Attack,type = "p", xlab = "Atac", ylab = "Tipus Normal")
-print("Grafica Atac Pokemons tipus Aigua")
-plot(b$Attack,type = "p", xlab = "Atac", ylab = "Tipus Aigua")
-print("Grafica Defensa Pokemons tipus normal")
-plot(a$Defense,type = "p", xlab = "Defensa", ylab = "Tipus Normal")
-print("Grafica Defensa Pokemons tipus Aigua")
-plot(b$Defense,type = "p", xlab = "Defensa", ylab = "Tipus Aigua")
-print("Grafica Spe_Atac Pokemons tipus normal")
-plot(a$Sp_Atk,type = "p", xlab = "Spe_Atac", ylab = "Tipus Normal")
-print("Grafica Spe_Atac Pokemons tipus Aigua")
-plot(b$Sp_Atk,type = "p", xlab = "Spe_Atac", ylab = "Tipus Aigua")
-print("Grafica Spe_Defensa Pokemons tipus normal")
-plot(a$Sp_Def,type = "p", xlab = "Spe_Defensa", ylab = "Tipus Normal")
-print("Grafica Spe_Defensa Pokemons tipus Aigua")
-plot(b$Sp_Def,type = "p", xlab = "Spe_Defensa", ylab = "Tipus Aigua")
-print("")
+#He separat els pokemons de tipus aigua i els de tipus normal
+#I amb un label encoder he fet que els de tipus Aigua siguin un 1 i els de tipus Normal siguin amb un 0 
+pokemon4
+print("Grafica Atack")
+plot(pokemon4$Attack,pokemon4$tipus, type = "p", xlab = "Atack", ylab = "Foc=1, Planta=2, Aigua=3")
+print("Grafica Defense")
+plot(pokemon4$Defense,pokemon4$tipus, type = "p", xlab = "Defense", ylab = "Foc=1, Planta=2, Aigua=3")
+print("Grafica Spe_Atack")
+plot(pokemon4$Sp_Atk,pokemon4$tipus, type = "p", xlab = "Special Atack", ylab = "Foc=1, Planta=2, Aigua=3")
+print("Grafica Spe_Atack")
+plot(pokemon4$Sp_Def,pokemon4$tipus, type = "p", xlab = "Special Defense", ylab = "Foc=1, Planta=2, Aigua=3")
+print("Grafica HP")
+plot(pokemon4$HP,pokemon4$tipus, type = "p", xlab = "HP", ylab = "Foc=1, Planta=2, Aigua=3")
+print("Grafica Speed")
+plot(pokemon4$Speed,pokemon4$tipus, type = "p", xlab = "Speed", ylab = "Foc=1, Planta=2, Aigua=3")
 
+
+print("Anova")
+anova=aov(tipus~HP+Attack+Defense+Sp_Atk+Sp_Def+Speed,data=pokemon4)
+summary(anova)
+
+print("Model Regressió Logística")
+modg=lm(tipus~HP+Attack+Defense+Sp_Atk+Sp_Def+Speed,family = binomial, data=pokemon4)
+summary(modg)
+print("acdvdvdv")
+aov(modg)
+print("-----")
+confint(modg)
+print("-----")
+exp(coef(modg))
+print("Model Regressió Poisson")
+modg2=lm(tipus~HP+Attack+Defense+Sp_Atk+Sp_Def+Speed,family = poisson, data=pokemon4)
+summary(modg2)
+print("acdvdvdv")
+aov(modg2)
+print("-----")
+confint(modg2)
+print("-----")
+exp(coef(modg2))
+
+#Matriu variances i covariances
+#pokemon5=pokemon3[pokemon2$Type_1=="Water" | pokemon2$Type_1=="Grass" | pokemon2$Type_1=="Fire",]
+#cova=cov(pokemon3)
+#cova[is.na(cova)] = 0
+#heatmap(cova)
 
 ```
