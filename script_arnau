@@ -1,7 +1,7 @@
 ---
-title: "Pràctica Anàlisi Estadística"
-author: "Arnau Garriga Riba, Santiago Pérez Lete"
-date: "13/1/2022"
+title: "practicaes"
+author: "Santi Pérez"
+date: "1/5/2022"
 output: word_document
 ---
 
@@ -17,7 +17,7 @@ library(Matrix)
 library(calculus)
 library(magrittr)
 
-pokemon=read.csv("Documents/3r/AE/practica/pokemon_alopez247.csv",header=TRUE)
+pokemon = read.csv("database.csv")
 
 print("Filtrat pokemon primera generació")
 pokemon2 <- pokemon[0:151,0:23]
@@ -46,38 +46,58 @@ pokemon3["perc_Speed"]   = pokemon2$perc_Speed
 pokemon3
 
 ```
-```{r 0 code}
-#Matriz de varianzas y covarianzas
-cova=cov(pokemon3)
+Primerament, filtrem la base de dades amb només les columnes i files que necessitem per aquest supòsit.
+
+```{r 1_0 code}
+pokemon_1 <- pokemon[0:151,c(6,7,8,9,10,11,22)]
+pokemon_1["HP"]     = pokemon2$HP
+pokemon_1["Attack"]    = pokemon2$Attack
+pokemon_1["Defense"]   = pokemon2$Defense
+pokemon_1["Sp_Atk"]      = pokemon2$Sp_Atk
+pokemon_1["Sp_Def"]  = pokemon2$Sp_Def
+pokemon_1["Speed"] = pokemon2$Speed
+pokemon_1["Catch_Rate"]      = pokemon2$Catch_Rate
+```
+
+Mostrem la matriu de variàncies i covariàncies de les variables d’aquest supòsit en el següent heatmap per fer-ho més visible.
+
+
+```{r 1_1 code}
+cova=cov(pokemon_1)
 cova[is.na(cova)] = 0
 heatmap(cova)
-print("-----")
-#Matriz que muestra correlación entre x e y
-corr=cor(pokemon3)
+```
+Observem que la diagonal principal és la que té els valors més alts, ja que hi ha les variàncies. El altres elements són les covariàncies. Fixant-nos amb el Catch_Rate, podem dir que té una variància molt alta (perquè tenim valors entre el 3 i 255), i hi ha poca covariància respecte les altres variables.
+
+Ara, també veurem una matriu (també en format heatmap) que mostra la correlació entre les variables.
+
+```{r 1_2 code}
+corr=cor(pokemon_1)
 corr[is.na(corr)] = 0
 heatmap(corr)
-print("-----")
 ```
 
+La matriu està construïda pels coeficients de correlació de cada parella de variables. Veiem que la diagonal principal és tota d’1s.
 
-```{r 1 code}
-print("Primer objectiu (Relació pes i altura amb el catch_rate)")
-#Gràfiques
-print("Histograma del pes")
-hist(pokemon2$Weight_kg)
-print("Histograma de l'altura")
-hist(pokemon2$Height_m)
-print("Histograma del catch_rate")
-hist(pokemon2$Catch_Rate)
-print("Gràfica relació pes amb catch_rate")
-plot(pokemon2$Weight_kg,pokemon2$Catch_Rate,type = "p", main = "Relació pes amb catch_rate", xlab = "Pes", ylab = "Catch_Rate")
-print("Gràfica relació altura amb catch_rate")
-plot(pokemon2$Height_m,pokemon2$Catch_Rate,type = "p", main = "Relació altura amb catch_rate", xlab = "Altura", ylab = "Catch Rate")
+Ara, mitjançant l’ANOVA, farem la validació global empleant un model lineal generalitzat.
+
+```{r 1_3 code}
+plot(pokemon_1$HP,pokemon_1$Catch_Rate,type = "p", main = "Relació HP amb catch_rate", xlab = "HP", ylab = "Catch_Rate")
+print("Gràfica relació atac amb catch_rate")
+plot(pokemon_1$Attack,pokemon_1$Catch_Rate,type = "p", main = "Relació atac amb catch_rate", xlab = "Atac", ylab = "Catch_Rate")
+print("Gràfica relació defensa amb catch_rate")
+plot(pokemon_1$Defense,pokemon_1$Catch_Rate,type = "p", main = "Relació defensa amb catch_rate", xlab = "Defensa", ylab = "Catch Rate")
+print("Gràfica relació atac especial amb catch_rate")
+plot(pokemon_1$Sp_Atk,pokemon_1$Catch_Rate,type = "p", main = "Relació atac especial amb catch_rate", xlab = "Atac Especial", ylab = "Catch Rate")
+print("Gràfica relació defensa especial amb catch_rate")
+plot(pokemon_1$Sp_Def,pokemon_1$Catch_Rate,type = "p", main = "Relació defensa especial amb catch_rate", xlab = "Defensa especial", ylab = "Catch Rate")
+print("Gràfica relació velocitat amb catch_rate")
+plot(pokemon_1$Speed,pokemon_1$Catch_Rate,type = "p", main = "Relació velocitat amb catch_rate", xlab = "Velocitat", ylab = "Catch Rate")
 print("Anova")
-anova=aov(Catch_Rate~Height_m+Weight_kg,data=pokemon2)
+anova=aov(Catch_Rate~HP+Attack+Defense+Sp_Atk+Sp_Def+Speed,data=pokemon_1)
 summary(anova)
 print("Model Lineal Generalitzat")
-modg=glm(Catch_Rate~Height_m+Weight_kg,family = poisson, data=pokemon2)
+modg=glm(Catch_Rate~HP+Attack+Defense+Sp_Atk+Sp_Def+Speed,family = poisson, data=pokemon_1)
 summary(modg)
 print("acdvdvdv")
 aov(modg)
@@ -86,26 +106,46 @@ confint(modg)
 print("-----")
 exp(coef(modg))
 ```
+
+Trobem els residuals. Tant els working residuals com els deviance residuals.
+
+```{r 1_4 code}
+summary(modg$residuals)
+summary(resid(modg))
+```
+Els primers són els working residuals, i els segons, els deviance residuals
 
 ```{r 2 code}
-print("Primer objectiu (Relació Defensa i Defensa especial amb l'HP)")
-#Gràfiques
-print("Histograma de l'HP")
-hist(pokemon2$perc_HP)
-print("Histograma del perc_Defense")
-hist(pokemon2$perc_Defense)
-print("Histograma del perc_Sp_Def")
-hist(pokemon2$perc_Sp_Def)
-print("Gràfica relació percentatge HP amb Defense")
-plot(pokemon2$perc_Defense,pokemon2$perc_HP,type = "p", main = "Relació HP amb Defense", xlab = "Defense", ylab = "HP")
-print("Gràfica relació percentatge HP amb Sp_Def")
-plot(pokemon2$perc_Sp_Def,pokemon2$perc_HP,type = "p", main = "Relació HP amb Special Defense", xlab = "Special Defense", ylab = "HP")
-#Veient les grafiques es pot veure que no hi ha suficient relació per fer el model
+pokemon4=pokemon2[pokemon2$Type_1=="Water" | pokemon2$Type_1=="Grass" | pokemon2$Type_1=="Fire",]
+factors=factor(pokemon4$Type_1)
+tipus=as.numeric(factors)
+pokemon4["tipus"] = tipus
+pokemon4[is.na(pokemon4)]=0
+pokemon4
+
+#He separat els pokemons de tipus aigua i els de tipus normal
+#I amb un label encoder he fet que els de tipus Aigua siguin un 1 i els de tipus Normal siguin amb un 0 
+pokemon4
+print("Grafica Atack")
+plot(pokemon4$Attack,pokemon4$tipus, type = "p", xlab = "Atack", ylab = "Foc=1, Planta=2, Aigua=3")
+print("Grafica Defense")
+plot(pokemon4$Defense,pokemon4$tipus, type = "p", xlab = "Defense", ylab = "Foc=1, Planta=2, Aigua=3")
+print("Grafica Spe_Atack")
+plot(pokemon4$Sp_Atk,pokemon4$tipus, type = "p", xlab = "Special Atack", ylab = "Foc=1, Planta=2, Aigua=3")
+print("Grafica Spe_Atack")
+plot(pokemon4$Sp_Def,pokemon4$tipus, type = "p", xlab = "Special Defense", ylab = "Foc=1, Planta=2, Aigua=3")
+print("Grafica HP")
+plot(pokemon4$HP,pokemon4$tipus, type = "p", xlab = "HP", ylab = "Foc=1, Planta=2, Aigua=3")
+print("Grafica Speed")
+plot(pokemon4$Speed,pokemon4$tipus, type = "p", xlab = "Speed", ylab = "Foc=1, Planta=2, Aigua=3")
+
+
 print("Anova")
-anova=aov(perc_HP~perc_Defense+perc_Sp_Def,data=pokemon2)
+anova=aov(tipus~HP+Attack+Defense+Sp_Atk+Sp_Def+Speed,data=pokemon4)
 summary(anova)
-print("Model Lineal Generalitzat")
-modg=glm(perc_HP~perc_Defense+perc_Sp_Def,family = poisson, data=pokemon2)
+
+print("Model Regressió Logística")
+modg=lm(tipus~HP+Attack+Defense+Sp_Atk+Sp_Def+Speed,family = binomial, data=pokemon4)
 summary(modg)
 print("acdvdvdv")
 aov(modg)
@@ -113,100 +153,20 @@ print("-----")
 confint(modg)
 print("-----")
 exp(coef(modg))
-
-```
-
-```{r 3 code}
-print("Primer objectiu (Relació Pr_Male amb l'HP)")
-#Gràfiques
-print("Histograma del percentatge de l'HP")
-hist(pokemon2$perc_HP)
-print("Histograma del percentatge del Pr_Male")
-hist(pokemon2$Pr_Male)
-print("Gràfica relació percentatge HP amb Pr_Male")
-plot(pokemon2$Pr_Male,pokemon2$perc_HP,type = "p", main = "Relació HP amb Pr_Male", xlab = "Pr_Male", ylab = "HP")
-print("Anova")
-anova=aov(perc_HP~Pr_Male,data=pokemon2)
-summary(anova)
-print("Model lineal simple")
-model=lm(perc_HP~Pr_Male,data=pokemon2)
-model
-summary(model)
+print("Model Regressió Poisson")
+modg2=lm(tipus~HP+Attack+Defense+Sp_Atk+Sp_Def+Speed,family = poisson, data=pokemon4)
+summary(modg2)
 print("acdvdvdv")
-aov(model)
+aov(modg2)
 print("-----")
-confint(model)
+confint(modg2)
 print("-----")
-exp(coef(model))
-```
+exp(coef(modg2))
 
-```{r 4 code}
-print("Primer objectiu (Relació Perc_Velocitat amb el pes)")
-#Gràfiques
-print("Histograma del percentatge de velocitat")
-hist(pokemon2$perc_Speed)
-print("Histograma amb el pes")
-hist(pokemon2$Weight_kg)
-print("Gràfica relació percentatge de velocitat amb weight_kg")
-plot(pokemon2$perc_Speed,pokemon2$Weight_kg,type = "p", main = "Relació Velocitat amb pes", xlab = "%Velocitat", ylab = "pes")
-print("Anova")
-anova=aov(perc_Speed~Weight_kg,data=pokemon2)
-summary(anova)
-print("Model lineal simple")
-model=lm(perc_Speed~Weight_kg,data=pokemon2)
-model
-summary(model)
-print("acdvdvdv")
-aov(model)
-print("-----")
-confint(model)
-print("-----")
-exp(coef(model))
-```
-
-```{r 5 code}
-print("Primer objectiu (Relació Catch_Rate i les 6 estadístiques")
-#Gràfiques
-
-pokemon2
-
-print("Histograma del HP")
-hist(pokemon2$HP)
-print("Histograma del atac")
-hist(pokemon2$Attack)
-print("Histograma del defensa")
-hist(pokemon2$Defense)
-print("Histograma del atac especial")
-hist(pokemon2$Sp_Atk)
-print("Histograma del defensa especial")
-hist(pokemon2$Sp_Def)
-print("Histograma del velocitat")
-hist(pokemon2$Speed)
-print("Histograma del catch_rate")
-hist(pokemon2$Catch_Rate)
-print("Gràfica relació HP amb catch_rate")
-plot(pokemon2$HP,pokemon2$Catch_Rate,type = "p", main = "Relació HP amb catch_rate", xlab = "HP", ylab = "Catch_Rate")
-print("Gràfica relació atac amb catch_rate")
-plot(pokemon2$Attack,pokemon2$Catch_Rate,type = "p", main = "Relació atac amb catch_rate", xlab = "Atac", ylab = "Catch_Rate")
-print("Gràfica relació defensa amb catch_rate")
-plot(pokemon2$Defense,pokemon2$Catch_Rate,type = "p", main = "Relació defensa amb catch_rate", xlab = "Defensa", ylab = "Catch Rate")
-print("Gràfica relació atac especial amb catch_rate")
-plot(pokemon2$Sp_Atk,pokemon2$Catch_Rate,type = "p", main = "Relació atac especial amb catch_rate", xlab = "Atac Especial", ylab = "Catch Rate")
-print("Gràfica relació defensa especial amb catch_rate")
-plot(pokemon2$Sp_Def,pokemon2$Catch_Rate,type = "p", main = "Relació defensa especial amb catch_rate", xlab = "Defensa especial", ylab = "Catch Rate")
-print("Gràfica relació velocitat amb catch_rate")
-plot(pokemon2$Speed,pokemon2$Catch_Rate,type = "p", main = "Relació velocitat amb catch_rate", xlab = "Velocitat", ylab = "Catch Rate")
-print("Anova")
-anova=aov(Catch_Rate~HP+Attack+Defense+Sp_Atk+Sp_Def+Speed,data=pokemon2)
-summary(anova)
-print("Model Lineal Generalitzat")
-modg=glm(Catch_Rate~HP+Attack+Defense+Sp_Atk+Sp_Def+Speed,family = poisson, data=pokemon2)
-summary(modg)
-print("acdvdvdv")
-aov(modg)
-print("-----")
-confint(modg)
-print("-----")
-exp(coef(modg))
+#Matriu variances i covariances
+#pokemon5=pokemon3[pokemon2$Type_1=="Water" | pokemon2$Type_1=="Grass" | pokemon2$Type_1=="Fire",]
+#cova=cov(pokemon3)
+#cova[is.na(cova)] = 0
+#heatmap(cova)
 
 ```
