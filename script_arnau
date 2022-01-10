@@ -97,23 +97,26 @@ print("Anova")
 anova=aov(Catch_Rate~HP+Attack+Defense+Sp_Atk+Sp_Def+Speed,data=pokemon_1)
 summary(anova)
 print("Model Lineal Generalitzat")
-modg=glm(Catch_Rate~HP+Attack+Defense+Sp_Atk+Sp_Def+Speed,family = poisson, data=pokemon_1)
-summary(modg)
+model_1=lm(formula=Catch_Rate~HP+Attack+Defense+Sp_Atk+Sp_Def+Speed, data=pokemon_1)
+summary(model_1)
 print("acdvdvdv")
-aov(modg)
+aov(model_1)
 print("-----")
-confint(modg)
-print("-----")
-exp(coef(modg))
+exp(coef(model_1))
 ```
 
-Trobem els residuals. Tant els working residuals com els deviance residuals.
+Trobem els residuals del model.
 
 ```{r 1_4 code}
-summary(modg$residuals)
-summary(resid(modg))
+summary(model_1$residuals)
 ```
 Els primers són els working residuals, i els segons, els deviance residuals
+
+Els intervals de confiança del intercept (Catch_Rate) i de les 6 estadístiques són els següents:
+
+```{r 1_5 code}
+confint(model_1)
+```
 
 Primer filtrem la base de dades per tal de tenir els pokemon de tipus aigua, foc i planta amb el seu tipus codificat.
 ```{r 2_0 code}
