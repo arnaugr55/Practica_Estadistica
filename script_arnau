@@ -328,10 +328,12 @@ pokemon3 <- pokemon3[0:71,c(1,2,13,23)]
 pokemon3
 ```
 
+ANALITZAR AQUESTA TAULA
+
+Fem l'Anova:
+
 Creem una taula en la qual classifiquem els diferents Pokémon segons el seu cos i si són o no llegendaris
 ```{r 3_1 taula}
-clas2=ifelse(pred2>0.5,"1","0")
-mean(clas2==pokemon4$Type_1)
 taula <- table(isLegendary=pokemon3$isLegendary, Body_Style=pokemon3$Body_Style)
 taula
 ```
@@ -342,7 +344,7 @@ anova <- aov(model_3)
 summary(anova)
 ```
 
-Anàlisi de la taula:
+Anàlisi de la taula ANOVA:
 
 Graus de llibertat: Tenim que per la variable Body_Style hi ha 7 graus de llibertat (8 possbilibles valors - 1), i per la IsLegendary tenim 1 grau de llibertat.
 
