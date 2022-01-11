@@ -48,7 +48,7 @@ pokemon3
 ```
 Primerament, filtrem la base de dades amb només les columnes i files que necessitem per aquest supòsit.
 
-```{r 1_0 code}
+```{r 1_0 inicialitzacio}
 pokemon_1 <- pokemon[0:151,c(6,7,8,9,10,11,22)]
 pokemon_1["HP"]     = pokemon2$HP
 pokemon_1["Attack"]    = pokemon2$Attack
@@ -62,26 +62,28 @@ pokemon_1["Catch_Rate"]      = pokemon2$Catch_Rate
 Mostrem la matriu de variàncies i covariàncies de les variables d’aquest supòsit en el següent heatmap per fer-ho més visible.
 
 
-```{r 1_1 code}
+```{r 1_1 Var_cov_matrices}
 cova=cov(pokemon_1)
 cova[is.na(cova)] = 0
 heatmap(cova)
 ```
+
 Observem que la diagonal principal és la que té els valors més alts, ja que hi ha les variàncies. El altres elements són les covariàncies. Fixant-nos amb el Catch_Rate, podem dir que té una variància molt alta (perquè tenim valors entre el 3 i 255), i hi ha poca covariància respecte les altres variables.
 
 Ara, també veurem una matriu (també en format heatmap) que mostra la correlació entre les variables.
 
-```{r 1_2 code}
+```{r 1_2 correlation}
 corr=cor(pokemon_1)
 corr[is.na(corr)] = 0
 heatmap(corr)
+```(corr)
 ```
 
 La matriu està construïda pels coeficients de correlació de cada parella de variables. Veiem que la diagonal principal és tota d’1s.
 
-Ara, mitjançant l’ANOVA, farem la validació global empleant un model lineal generalitzat.
-
-```{r 1_3 code}
+Ara mostrem les gràfiques en què comparem la variable Catch_Rate amb les 6 estadístiques.
+```{r 1_3 grafiques relacio}
+print("Gràfica relació HP amb catch_rate")
 plot(pokemon_1$HP,pokemon_1$Catch_Rate,type = "p", main = "Relació HP amb catch_rate", xlab = "HP", ylab = "Catch_Rate")
 print("Gràfica relació atac amb catch_rate")
 plot(pokemon_1$Attack,pokemon_1$Catch_Rate,type = "p", main = "Relació atac amb catch_rate", xlab = "Atac", ylab = "Catch_Rate")
@@ -93,30 +95,83 @@ print("Gràfica relació defensa especial amb catch_rate")
 plot(pokemon_1$Sp_Def,pokemon_1$Catch_Rate,type = "p", main = "Relació defensa especial amb catch_rate", xlab = "Defensa especial", ylab = "Catch Rate")
 print("Gràfica relació velocitat amb catch_rate")
 plot(pokemon_1$Speed,pokemon_1$Catch_Rate,type = "p", main = "Relació velocitat amb catch_rate", xlab = "Velocitat", ylab = "Catch Rate")
-print("Anova")
+```
+
+Calculant l'Anova, podem fer la validació individual de les 6 variables independents. 
+
+```{r 1_4 anova}
 anova=aov(Catch_Rate~HP+Attack+Defense+Sp_Atk+Sp_Def+Speed,data=pokemon_1)
 summary(anova)
-print("Model Lineal Generalitzat")
+```
+
+Mirem el codi de significació i veiem que, amb un Pr = 0.05, totes les característiques són variables significatives. A sobre veiem que totes, excepte Speed, són, a més, significatives amb un Pr = 0.001.
+Amb això, podem dir que totes les variables tenen un efecte important sobre el model, en especial HP, Attack, Defense, Sp_Atk i Sp_Def.
+
+Pels següents apartat creem el model de regressió múltiple amb la funció lm().
+```{r 1_5 model_regressio}
+print("Model de Regressió Lineal Múltiple")
 model_1=lm(formula=Catch_Rate~HP+Attack+Defense+Sp_Atk+Sp_Def+Speed, data=pokemon_1)
 summary(model_1)
-print("acdvdvdv")
-aov(model_1)
-print("-----")
-exp(coef(model_1))
+plot(model_1)
+```
+Observem el summary del model lineal de regressió múltiple creat per fer la validació global.
+
+Com que el p-value és menor a 0.05 (alfa) podem dir que rebutjem la HO i acceptem la H1, o sigui, el model es vàlid. També mirem la R² ajustada i veiem que el Catch_Rate és predit un 62.86% per les nostres variables independents.
+
+
+Mirant el summary, també trobem un resum sobre els residuals del model. Els residuals representen l’error que hi ha hagut (del Catch_Rate predit respecte el real) en totes les prediccions. 
+
+Veiem que el residu (error) més gran que hi ha hagut entre les 151 Pokémon és de -138.861. També observem que a un 25% de les dades, el residu ha estat de més petit de 21.929 i a un altre 25% ha estat més gran de 32.458.
+
+També hem plotejat la gràfica "Residuals vs Fitted" que mostra el residual que hi ha hagut i el fitted-value (que es la predicció que s'ha fet del Catch_Rate) per cada Pokémon.
+
+
+Els intervals de confiança són els següents:
+```{r 1_6 IC}
+confint(model_1, conf.level=0.95)
+```
+Els intervals de confiança mostrats representen els valors entre els quals es podrien considerar les betas si es té un alfa=0.05. La de l'intercept és de la B0, HP->B1, Attack->B2... Speed->B6.
+
+Veiem que tots els intervals són entre valors negatius, excepte el de l'atac (beta2), que arriba a acceptar valors fins a 0.182514773.
+
+
+Per fer les prediccions, hem agafat alguns Pokémon d'una generació diferent a la primera, així evitem agafar Pokémon que ja estan al model. Doncs hem fet prediccions amb 3 Pokémon amb diferents Catch_Rate, un amb un valor alt, un amb un valor mitjà i l'altre amb el valor baix.
+
+```{r 1_7 prediccions}
+model_1$coefficients
+
+prediction <- function(pok) {
+  HP <- pok[6]
+  Attack <- pok[7]
+  Defense <- pok[8]
+  Sp_Atk <- pok[9]
+  Sp_Def <- pok[10]
+  Speed <- pok[11]
+  expected_catch_rate <- 348.5392 - 0.6639*HP - 0.1843*Attack - 0.8334*Defense - 0.5541*Sp_Atk - 1.0408*Sp_Def - 0.3518*Speed
+  return(expected_catch_rate[[1]])
+}
+
+llista = c("Sentret","Raikou","Granbull")
+for (name in llista) {
+  pok <- pokemon[pokemon$Name == name,]
+  pr <- prediction(pok)
+  print(paste("Segons la nostra predicció, el Pokémon", name, "té un Catch_Rate de", round(pr)))
+}
 ```
 
-Trobem els residuals del model.
+Per fer les prediccions, mirem els coeficients (betas) del model. Aleshores podem predir el Catch_Rate dels diferents Pokémon fent:
+  348.5392 - 0.6639*HP - 0.1843*Attack - 0.8334*Defense - 0.5541*Sp_Atk - 1.0408*Sp_Def - 0.3518*Speed
+  on els números són les betes, i HP,Attack...Speed són les estadístiques que depenen de cada Pokémon.
+  
+Com hem dit abans, com més altes siguin les estadístiques, més baix serà el Cath_Rate, és per això que les betas són negatives.
 
-```{r 1_4 code}
-summary(model_1$residuals)
-```
-Els primers són els working residuals, i els segons, els deviance residuals
+Prediccions
+Sentret: Hem obtingut que el seu Catch_Rate és de 215, valor que no s'allunya molt del seu Catch_Rate real (255).
+Raikou: D'aquest Pokémon llegandari hem obtingut un Catch_Rate de 2.3592 que hem aproximat a 2, valor molt proper al Cath_Rate verdader de 3.
+Granbull: El Catch_rate real d'aquest Pokémon és de 75, i n'hem obtingut un de 93.
 
-Els intervals de confiança del intercept (Catch_Rate) i de les 6 estadístiques són els següents:
 
-```{r 1_5 code}
-confint(model_1)
-```
+
 
 Primer filtrem la base de dades per tal de tenir els pokemon de tipus aigua, foc i planta amb el seu tipus codificat.
 ```{r 2_0 code}
