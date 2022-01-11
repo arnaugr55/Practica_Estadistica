@@ -317,3 +317,33 @@ print("Grafica Speed")
 plot(pokemon4$Speed,pokemon4$Type_1, type = "p", xlab = "Speed", ylab = "Roca=1, Electric=0")
 
 ```
+
+
+
+Primerament, hem filtrat la base de dades quedant-nos només amb aquells Pokémon amb el tipus Psíquic o Drac.
+
+```{r 3_0 inicialitzacio}
+pokemon3=pokemon[pokemon$Type_1=="Psychic" | pokemon$Type_1=="Dragon",]
+pokemon3 <- pokemon3[0:71,c(1,2,13,23)]
+pokemon3
+```
+
+Creem una taula en la qual classifiquem els diferents Pokémon segons el seu cos i si són o no llegendaris
+```{r 3_1 taula}
+clas2=ifelse(pred2>0.5,"1","0")
+mean(clas2==pokemon4$Type_1)
+taula <- table(isLegendary=pokemon3$isLegendary, Body_Style=pokemon3$Body_Style)
+taula
+```
+
+```{r 3_2 taula}
+model_3 <- lm(formula=Number~isLegendary+Body_Style , data=pokemon3)
+anova <- aov(model_3)
+summary(anova)
+```
+
+Anàlisi de la taula:
+
+Graus de llibertat: Tenim que per la variable Body_Style hi ha 7 graus de llibertat (8 possbilibles valors - 1), i per la IsLegendary tenim 1 grau de llibertat.
+
+Amb el p-value veiem que...
