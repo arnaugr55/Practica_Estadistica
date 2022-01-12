@@ -202,6 +202,24 @@ heatmap(corr)
 ```
 La matriu està construïda pels coeficients de correlació de cada parella de variables. Veiem que la diagonal principal és tota d’1s.
 
+Grafiques
+```{r 2_6 code}
+#Gràfiques
+print("Grafica Atack")
+plot(pokemon4$Attack,pokemon4$Type_1, type = "p", xlab = "Atack", ylab = "Roca=1, Electric=0")
+print("Grafica Defense")
+plot(pokemon4$Defense,pokemon4$Type_1, type = "p", xlab = "Defense", ylab = "Roca=1, Electric=0")
+print("Grafica Spe_Atack")
+plot(pokemon4$Sp_Atk,pokemon4$Type_1, type = "p", xlab = "Special Atack", ylab = "Roca=1, Electric=0")
+print("Grafica Spe_Atack")
+plot(pokemon4$Sp_Def,pokemon4$Type_1, type = "p", xlab = "Special Defense", ylab = "Roca=1, Electric=0")
+print("Grafica HP")
+plot(pokemon4$HP,pokemon4$Type_1, type = "p", xlab = "HP", ylab = "Roca=1, Electric=0")
+print("Grafica Speed")
+plot(pokemon4$Speed,pokemon4$Type_1, type = "p", xlab = "Speed", ylab = "Roca=1, Electric=0")
+
+```
+
 Ara, mitjançant l’ANOVA, farem la validació global
 ```{r 2_3 code}
 print("Anova")
@@ -298,27 +316,6 @@ ggplot(pokemon4, aes(ind2, clas2))+
   theme_bw()+
   theme(legend.position = "none")
 ```
-
-
-Grafiques
-```{r 2_6 code}
-#Gràfiques
-print("Grafica Atack")
-plot(pokemon4$Attack,pokemon4$Type_1, type = "p", xlab = "Atack", ylab = "Roca=1, Electric=0")
-print("Grafica Defense")
-plot(pokemon4$Defense,pokemon4$Type_1, type = "p", xlab = "Defense", ylab = "Roca=1, Electric=0")
-print("Grafica Spe_Atack")
-plot(pokemon4$Sp_Atk,pokemon4$Type_1, type = "p", xlab = "Special Atack", ylab = "Roca=1, Electric=0")
-print("Grafica Spe_Atack")
-plot(pokemon4$Sp_Def,pokemon4$Type_1, type = "p", xlab = "Special Defense", ylab = "Roca=1, Electric=0")
-print("Grafica HP")
-plot(pokemon4$HP,pokemon4$Type_1, type = "p", xlab = "HP", ylab = "Roca=1, Electric=0")
-print("Grafica Speed")
-plot(pokemon4$Speed,pokemon4$Type_1, type = "p", xlab = "Speed", ylab = "Roca=1, Electric=0")
-
-```
-
-
 
 Primerament, hem filtrat la base de dades quedant-nos només amb aquells Pokémon amb el tipus Psíquic o Drac.
 
